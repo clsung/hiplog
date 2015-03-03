@@ -42,7 +42,7 @@ type HipChatRoom struct {
 }
 
 func writeToFile(f *os.File, sourceRoom HipChatRoom, sourceMessage HipChatEventMessage) error {
-	msg := fmt.Sprintf("[%s] %s\n", sourceRoom.Name, sourceMessage.Message)
+	msg := fmt.Sprintf("[%s|%s] %s: %s\n", sourceMessage.Date, sourceRoom.Name, sourceMessage.Message)
 	_, err := f.WriteString(msg)
 	return err
 }
