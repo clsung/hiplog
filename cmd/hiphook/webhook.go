@@ -14,6 +14,7 @@ var (
 	command    = flag.String("command", "query", "command to run on webhook")
 	webhookURL = flag.String("webhook_url", "", "webhook url")
 	webhookID  = flag.String("webhook_id", "", "webhook id, only for delete")
+	eventType  = flag.String("event_type", "room_notification", "event type for webhook")
 )
 
 type CreateWebHook struct {
@@ -29,9 +30,6 @@ func main() {
 	if hipToken == "" {
 		log.Fatal("Need to set HIPLOG_TOKEN")
 	}
-	if *webhookURL == "" {
-		log.Fatal("Need to specify webhook_url")
-	}
 	roomID := flag.Arg(0)
 	// TODO: make it flag
 	c := new(http.Client)
@@ -46,10 +44,13 @@ func main() {
 	var err error
 	var resp *request.Response
 	if *command == "create" {
+		if *webhookURL == "" {
+			log.Fatal("Need to specify webhook_url")
+		}
 		req.Json = map[string]string{
 			"url":   *webhookURL,
 			"name":  roomID,
-			"event": "room_notification",
+			"event": *eventType,
 		}
 		resp, err = req.Post(URL)
 	} else if *command == "query" {
