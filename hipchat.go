@@ -1,4 +1,4 @@
-package hiplog
+package main
 
 import (
 	"encoding/json"
