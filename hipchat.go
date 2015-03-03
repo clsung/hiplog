@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-type HipChatNotificationEvent struct {
+type HipChatEvent struct {
 	Event string           `json:"event"`
 	Item  HipChatEventItem `json:"item"`
 }
@@ -24,8 +24,9 @@ type HipChatEventMessage struct {
 	From          string
 	Message       string
 	Color         string
+	Type          string `json:"type,omitempty"`
 	Id            string
-	MessageFormat string
+	MessageFormat string `json:"message_format"`
 }
 
 type HipChatFile struct {
@@ -36,18 +37,18 @@ type HipChatFile struct {
 }
 
 type HipChatRoom struct {
-	Id   string
-	Name string
+	Id   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 func writeToFile(f *os.File, sourceRoom HipChatRoom, sourceMessage HipChatEventMessage) error {
-	msg := fmt.Sprintf("[%s] %s", sourceRoom.Name, sourceMessage.Message)
+	msg := fmt.Sprintf("[%s] %s\n", sourceRoom.Name, sourceMessage.Message)
 	_, err := f.WriteString(msg)
 	return err
 }
 
 func handler(w http.ResponseWriter, r *http.Request, outFile *os.File) {
-	var notifyEvent HipChatNotificationEvent
+	var notifyEvent HipChatEvent
 
 	json.NewDecoder(r.Body).Decode(&notifyEvent)
 
