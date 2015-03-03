@@ -1,4 +1,4 @@
-package hiplogger
+package hiplog
 
 import (
 	"encoding/json"
