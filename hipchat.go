@@ -21,12 +21,18 @@ type HipChatEventItem struct {
 type HipChatEventMessage struct {
 	Date string
 	//File          HipChatFile `json:"file,omitempty"`
-	From          string
+	From          interface{}
 	Message       string
 	Color         string
 	Type          string `json:"type,omitempty"`
 	Id            string
 	MessageFormat string `json:"message_format"`
+}
+
+type HipChatUser struct {
+	Id      int    `json:"id"`
+	Mention string `json:"mention_name"`
+	Name    string `json:"name"`
 }
 
 type HipChatFile struct {
@@ -42,7 +48,23 @@ type HipChatRoom struct {
 }
 
 func writeToFile(f *os.File, sourceRoom HipChatRoom, sourceMessage HipChatEventMessage) error {
-	msg := fmt.Sprintf("[%s|%s] %s: %s\n", sourceMessage.Date, sourceRoom.Name, sourceMessage.Message)
+
+	strFrom, ok := sourceMessage.From.(string)
+
+	if !ok {
+		str, err := json.Marshal(sourceMessage.From)
+		if err != nil {
+			return err
+		}
+		var user HipChatUser
+		err = json.Unmarshal([]byte(str), &user)
+		if err != nil {
+			return err
+		}
+		strFrom = user.Name
+	}
+
+	msg := fmt.Sprintf("[%s|%s] %s: %s\n", sourceMessage.Date, sourceRoom.Name, strFrom, sourceMessage.Message)
 	_, err := f.WriteString(msg)
 	return err
 }
