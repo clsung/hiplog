@@ -13,6 +13,7 @@ import (
 var (
 	command    = flag.String("command", "query", "command to run on webhook")
 	webhookURL = flag.String("webhook_url", "", "webhook url")
+	webhookID  = flag.String("webhook_id", "", "webhook id, only for delete")
 )
 
 type CreateWebHook struct {
@@ -53,6 +54,14 @@ func main() {
 		resp, err = req.Post(URL)
 	} else if *command == "query" {
 		resp, err = req.Get(URL)
+	} else if *command == "delete" {
+		if *webhookID == "" {
+			log.Fatal("Need to specify webhook_id")
+		}
+		URL := fmt.Sprintf("%s/%s", URL, *webhookID)
+		resp, err = req.Delete(URL)
+	} else {
+		log.Fatal("Must specify the correct command")
 	}
 	if err != nil {
 		defer resp.Body.Close()
