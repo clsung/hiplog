@@ -19,8 +19,8 @@ type HipChatEventItem struct {
 }
 
 type HipChatEventMessage struct {
-	Date string
-	//File          HipChatFile `json:"file,omitempty"`
+	Date          string
+	File          HipChatFile `json:"file,omitempty"`
 	From          interface{}
 	Message       string
 	Color         string
@@ -36,10 +36,10 @@ type HipChatUser struct {
 }
 
 type HipChatFile struct {
-	Name     string
-	Size     int
-	ThumbUrl string
-	Url      string
+	Name     string `json:"name"`
+	Size     int    `json:"size"`
+	ThumbUrl string `json:"thumb_url"`
+	Url      string `json:"url"`
 }
 
 type HipChatRoom struct {
